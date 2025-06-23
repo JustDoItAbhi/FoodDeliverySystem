@@ -4,18 +4,24 @@ import com.CustomerService.dtos.CustomerResponseDto;
 import com.CustomerService.dtos.CustomerSignUp;
 import com.CustomerService.exceptions.CustomerAlreadyExsits;
 import com.CustomerService.exceptions.CustomerNotFoundException;
+import com.CustomerService.kafka.KafkaConstrains;
+import com.CustomerService.kafka_email_service.EmailDto;
+import com.CustomerService.kafka_email_service.JavaEmailService;
 import com.CustomerService.mapper.CustomerMappers;
 import com.CustomerService.models.Address;
 import com.CustomerService.models.Customers;
 import com.CustomerService.repositories.AddressRepository;
 import com.CustomerService.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class CustomerServiceImpl implements CustomerService{
@@ -25,6 +31,10 @@ public class CustomerServiceImpl implements CustomerService{
     private AddressRepository addressRepository;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private KafkaTemplate<String, EmailDto>kafkaTemplate;
+    @Autowired
+    private JavaEmailService emailService;
 
     @Override
     public CustomerResponseDto signupCustomer(CustomerSignUp signUp) {
@@ -46,6 +56,12 @@ public class CustomerServiceImpl implements CustomerService{
         addressRepository.save(address);
         customers.setAddress(address);
         customerRepository.save(customers);
+        EmailDto dto = new EmailDto();
+        dto.setEmailTo(customers.getEmail());
+        dto.setEmailSubject("Welcome to Our Resturant!");
+        dto.setEmailMessage("Hi " + customers.getCustomerName() + ", welcome aboard!:::::"+ customers.getCreatedAt());
+        kafkaTemplate.send(KafkaConstrains.kafkaTopic, dto);
+
         return CustomerMappers.fromEntity(customers);
     }
 
@@ -59,6 +75,13 @@ public class CustomerServiceImpl implements CustomerService{
         if(!passwordEncoder.matches(password,savedCustomer.get().getPassword())){
             throw new CustomerNotFoundException("PLEASE ENTER VALID PASSWORD "+ password);
         }
+
+        EmailDto dto=new EmailDto();
+        dto.setEmailTo(email);
+        dto.setEmailSubject("THANKS FOR LOGIN");
+        String message= "YOU CAN CHOOSE YOUR CHOICE OF FOOD FROM OUR RESTURANATS";
+        dto.setEmailMessage(message);
+        kafkaTemplate.send(KafkaConstrains.kafkaTopic, dto);
         return CustomerMappers.fromEntity(savedCustomer.get());
     }
 
@@ -75,7 +98,6 @@ public class CustomerServiceImpl implements CustomerService{
     @Override
     public boolean deleteCustomer(long id) {
         customerRepository.deleteById(id);
-
         return true;
     }
 }
