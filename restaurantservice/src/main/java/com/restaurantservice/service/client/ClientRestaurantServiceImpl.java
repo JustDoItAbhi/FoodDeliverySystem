@@ -1,12 +1,9 @@
 package com.restaurantservice.service.client;
 
-import com.restaurantservice.dtos.responsedtos.MenuResponseDto;
-import com.restaurantservice.dtos.responsedtos.NonVegMenuResponseDto;
+import com.restaurantservice.dtos.responsedtos.menuResponse.NonVegMenuResponseDto;
 import com.restaurantservice.dtos.responsedtos.RestaurantResponseDto;
 import com.restaurantservice.entity.Restaurants;
 import com.restaurantservice.exceptions.RestaurantNotExists;
-import com.restaurantservice.mappers.ClinetMapper;
-import com.restaurantservice.mappers.MenuMappers;
 import com.restaurantservice.mappers.RestaurantMapper;
 import com.restaurantservice.repositories.AddressRepository;
 import com.restaurantservice.repositories.NonVegMenuRepository;
@@ -17,7 +14,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +44,7 @@ public class ClientRestaurantServiceImpl implements ClientRestaurantService{
 //        if(cachedRestaurant!=null){
 //            return cachedRestaurant;
 //        }
-        RestaurantResponseDto savedRest= RestaurantMapper.forCreatingRest(rest);
+        RestaurantResponseDto savedRest= RestaurantMapper.fromRestaurantEntity(rest);
         savedRest.setMenu(savedRest.getMenu());
         List<NonVegMenuResponseDto>nonVegMenuResponseDtos=new ArrayList<>();
 

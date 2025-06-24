@@ -1,5 +1,6 @@
-package com.restaurantservice.dtos.responsedtos;
+package com.restaurantservice.dtos.responsedtos.menuResponse;
 
+import com.restaurantservice.entity.TypeOfSpicy;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,4 +11,5 @@ public class NonVegMenuResponseDto {
     private String foodItem;
     private double quantity;
     private double price;
+    private TypeOfSpicy spicy;
 }

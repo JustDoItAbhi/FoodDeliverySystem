@@ -10,8 +10,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class VegMenu extends BaseModels{
-    private String foodItem;
+public class Pizza extends BaseModels{
+    private String pizzaName;
+    private PizzaSize pizzaSize;
     private double quantity;
     private double price;
     @ManyToOne

@@ -12,11 +12,12 @@ import java.util.List;
 public class Menu extends BaseModels{
     private String RestName;
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    List<NonVegMenu>nonVegMenus;
+    private List<NonVegMenu>nonVegMenus;
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    List<VegMenu>vegMenus;
+    private  List<VegMenu>vegMenus;
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    private List<Pizza>pizzaList;
     @OneToOne
-//    @JoinColumn (name= "restaurantName")
     private Restaurants restaurants;
 
 }

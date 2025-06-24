@@ -31,9 +31,10 @@ public class RestaurantMapper {
     }
     public static RestaurantResponseDto fromRestaurantEntity(Restaurants restaurants){
         RestaurantResponseDto responseDto=forCreatingRest(restaurants);
-        responseDto.setMenu(MenuMappers.forMenuOnly(restaurants.getMenu()));
-        responseDto.getMenu().setNonVegMenusResponse(MenuMappers.fromNonVegMenuEntity(restaurants.getMenu().getNonVegMenus()));
-        responseDto.getMenu().setVegMenusResponse(MenuMappers.fromVegMenuEntity(restaurants.getMenu().getVegMenus()));
+        responseDto.setMenu(MenuMappers.fullMenuMapper(restaurants.getMenu()));
+        responseDto.getMenu().setNonVegMenusResponse(NonVegMapper.fromNonVegMenuEntity(restaurants.getMenu().getNonVegMenus()));
+        responseDto.getMenu().setVegMenusResponse(VegMenuMapper.fromVegMenuEntity(restaurants.getMenu().getVegMenus()));
+        responseDto.getMenu().setPizzaResponseDtoList (PizzaMapper.fromPizzaEntity(restaurants.getMenu().getPizzaList()));
         return responseDto;
     }
 }

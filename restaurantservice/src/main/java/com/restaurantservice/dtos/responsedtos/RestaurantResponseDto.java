@@ -1,5 +1,6 @@
 package com.restaurantservice.dtos.responsedtos;
 
+import com.restaurantservice.dtos.responsedtos.menuResponse.MenuResponseDto;
 import lombok.Getter;
 import lombok.Setter;
 
