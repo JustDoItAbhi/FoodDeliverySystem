@@ -69,126 +69,6 @@ public class AdminResaturantServiceImpl implements AdminRestaurantsServices {
         return RestaurantMapper.forCreatingRest(rest);
     }
 
-    //ADDED NON VEG MENU
-    @Override
-    public MenuResponseDto createNonVegMenu(MenuRequestDto dto) {
-        Optional<Restaurants>savedRestaurants=restaurantsRepository.findByrestaurantName(dto.getRestaurantName());
-        if(savedRestaurants.isEmpty()){
-            throw new RestaurantNotExists(" this restaurant not exists "+ dto.getRestaurantName());
-        }
-        Restaurants rest=savedRestaurants.get();
-        Menu menu= new Menu();
-//        if (menu == null) {
-//            throw new MenuNullException("Menu must be created before adding veg items." + dto.getNonVegMenus().toString());
-////            menu=menuRepository.save(menu);
-////            restaurantsRepository.save(rest);
-//        }
-//        menu = new Menu();
-
-        List<NonVegMenu> nonVegList = menu.getNonVegMenus();
-        if(nonVegList==null){
-            nonVegList=new ArrayList<>();
-        }
-        for(NonVegMenuRequestDto nonVegDto : dto.getNonVegMenus()){
-            Optional<NonVegMenu> savedMenu = nonVegMenuRepository.findByFoodItem(nonVegDto.getFoodItem());
-            if(savedMenu.isPresent()){
-                throw new NonVegMenuAlreadyExists("THIS FOOD "+ nonVegDto.getFoodItem()+" ALREADY EXISTS");
-            }
-            if(nonVegDto.getFoodItem().equals(nonVegDto.getFoodItem().toLowerCase())){
-                nonVegDto.setFoodItem(nonVegDto.getFoodItem().toUpperCase());
-            }
-            NonVegMenu nonVegMenu = new NonVegMenu();
-            nonVegMenu.setFoodItem(nonVegDto.getFoodItem());
-            nonVegMenu.setQuantity(nonVegDto.getQuantity());
-            nonVegMenu.setPrice(nonVegDto.getPrice());
-            nonVegMenu.setSpicy(nonVegDto.getSpicy());
-            nonVegMenuRepository.save(nonVegMenu);
-            nonVegList.add(nonVegMenu);
-            nonVegMenu.setMenu(menu);
-        }
-        menu.setRestName(dto.getRestaurantName());
-        menu.setNonVegMenus(nonVegList);
-        menuRepository.save(menu);
-        rest.setMenu(menu);
-        menu.setRestaurants(rest);
-        restaurantsRepository.save(rest);
-        return MenuMappers.forNonVegOnly(menu);
-
-    }
-
-    //ADDED VEG MENU
-    @Override
-    public MenuResponseDto createVegMenu(MenuRequestDto dto) {
-        Optional<Restaurants>savedRestaurants=restaurantsRepository.findByrestaurantName(dto.getRestaurantName());
-        if(savedRestaurants.isEmpty()){
-            throw new RestaurantNotExists(" this restaurant not exists "+ dto.getRestaurantName());
-        }
-        Restaurants rest=savedRestaurants.get();
-        Menu menu = rest.getMenu();
-        if (menu == null) {
-            throw new MenuNullException("Menu must be created before adding veg items.");
-        }
-        List<VegMenu> vegList = menu.getVegMenus();
-        if(vegList==null){
-            vegList=new ArrayList<>();
-        }
-        for(VegMenuRequetDto vegDto : dto.getVegMenus()){
-            Optional<VegMenu> savedMenu = vegMenuRepository.findByFoodItem(vegDto.getFoodItem());
-            if(savedMenu.isPresent()){
-                throw new NonVegMenuAlreadyExists("THIS FOOD "+ vegDto.getFoodItem()+" ALREADY EXISTS");
-            }
-            if(vegDto.getFoodItem().equals(vegDto.getFoodItem().toLowerCase())){
-                vegDto.setFoodItem(vegDto.getFoodItem().toUpperCase());
-            }
-            VegMenu vegMenu = new VegMenu();
-            vegMenu.setFoodItem(vegDto.getFoodItem());
-            vegMenu.setQuantity(vegDto.getQuantity());
-            vegMenu.setPrice(vegDto.getPrice());
-            vegMenu.setSpicy(vegDto.getSpicy());
-            vegMenuRepository.save(vegMenu);
-            vegMenu.setMenu(menu);
-            vegList.add(vegMenu);
-
-        }
-        menu.setVegMenus(vegList);
-        menuRepository.save(menu);
-        restaurantsRepository.save(rest);
-        return MenuMappers.forVegOnly(menu);
-    }
-
-    //ADDED PIZZA
-    @Override
-    public MenuResponseDto addPizza(MenuRequestDto dto) {
-        Optional<Restaurants> savedRest = restaurantsRepository.findByrestaurantName(dto.getRestaurantName());
-        if (savedRest.isEmpty()) {
-            throw new RestaurantNotExists("this restaurant not exists " + dto.getRestaurantName());
-        }
-        Restaurants rest = savedRest.get();
-        Menu menu = rest.getMenu();
-        List<Pizza> pizzas = menu.getPizzaList();
-        if (pizzas == null) {
-            pizzas = new ArrayList<>();
-        }
-        for (PizzaRequestDto pizzaRequestDto : dto.getPizzaRequestDtoList()) {
-            Pizza pizza = new Pizza();
-            if (pizzaRequestDto.getPizzaName().equals(pizzaRequestDto.getPizzaName().toLowerCase())) {
-                pizzaRequestDto.setPizzaName(pizzaRequestDto.getPizzaName().toUpperCase());
-            }
-                pizza.setPizzaName(pizzaRequestDto.getPizzaName());
-                pizza.setPizzaSize(pizzaRequestDto.getPizzaSize());
-                pizza.setQuantity(pizzaRequestDto.getQuantity());
-                pizza.setPrice(pizzaRequestDto.getPrice());
-                pizza.setSpicy(pizzaRequestDto.getSpicy());
-                pizzas.add(pizza);
-            pizzaRepository.save(pizza);
-        }
-        menu.setPizzaList(pizzas);
-            rest.setMenu(menu);
-            menuRepository.save(menu);
-            restaurantsRepository.save(rest);
-
-        return MenuMappers.forPizzaOnly(menu);
-    }
     //GET RESTAURANT BY NAME
     @Override
     public RestaurantResponseDto getRestaurantByName(String name) {
@@ -200,7 +80,6 @@ public class AdminResaturantServiceImpl implements AdminRestaurantsServices {
         return RestaurantMapper.fromRestaurantEntity(rest);
 
     }
-
     //GET MENU BY ID
     @Override
     public MenuResponseDto getById(long id) {
@@ -209,22 +88,4 @@ public class AdminResaturantServiceImpl implements AdminRestaurantsServices {
 
         return MenuMappers.fullMenuMapper(menu);
     }
-
-
-
-
-//    private List<VegMenuResponseDto> fromVegEntity(List<VegMenuRequetDto>vegMenuRequetDtoList){
-//        List<VegMenu>vegMenuList=new ArrayList<>();
-//        for(VegMenuRequetDto vegMenu:vegMenuRequetDtoList){
-//            VegMenu vegMenuResponseDto=new VegMenu();
-//            vegMenuResponseDto.setFoodItem(vegMenu.getFoodItem());
-//            vegMenuResponseDto.setQuantity(vegMenu.getQuantity());
-//            vegMenuResponseDto.setPrice(vegMenu.getPrice());
-//            vegMenuList.add(vegMenuResponseDto);
-//            vegMenuRepository.save(vegMenuResponseDto);
-//        }
-//        return VegMenuMapper.fromVegMenuEntity(vegMenuList);
-//    }
-
-
 }

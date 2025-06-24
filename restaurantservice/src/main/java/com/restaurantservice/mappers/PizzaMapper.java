@@ -18,6 +18,7 @@ public class PizzaMapper {
             pizzaResponseDto.setPizzaName(pizza.getPizzaName());
             pizzaResponseDto.setPrice(pizza.getPrice());
             pizzaResponseDto.setQuantity(pizza.getQuantity());
+            pizzaResponseDto.setSpicy(pizza.getSpicy());
             list.add(pizzaResponseDto);
         }
         return list;

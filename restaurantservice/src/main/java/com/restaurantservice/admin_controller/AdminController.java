@@ -13,31 +13,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 public class AdminController {
     @Autowired
-    private AdminRestaurantsServices services;
+    private AdminRestaurantsServices restServices;
+
     @PostMapping("/create")
     public ResponseEntity<RestaurantResponseDto> createRest(@RequestBody RestaurantRequestDto dto){
-        return ResponseEntity.ok(services.createRestaurant(dto));
-    }
-    @PostMapping("/createNonVegMenu")
-    public ResponseEntity<MenuResponseDto> createNonVegMenu(@RequestBody MenuRequestDto dto){
-        return ResponseEntity.ok(services.createNonVegMenu(dto));
-    }
-    @PostMapping("/createVegMenu")
-    public ResponseEntity<MenuResponseDto> createVegMenu(@RequestBody MenuRequestDto dto){
-        return ResponseEntity.ok(services.createVegMenu(dto));
-    }
-    @PostMapping("/createPizza")
-    public ResponseEntity<MenuResponseDto> createPizzaMenu(@RequestBody MenuRequestDto dto){
-        return ResponseEntity.ok(services.addPizza(dto));
-    }
-    @GetMapping("/{name}")
-    public ResponseEntity<RestaurantResponseDto> getRestByName(@PathVariable ("name")String name){
-        return ResponseEntity.ok(services.getRestaurantByName(name));
+        return ResponseEntity.ok(restServices.createRestaurant(dto));
     }
 
+    @GetMapping("/{name}")
+    public ResponseEntity<RestaurantResponseDto> getRestByName(@PathVariable ("name")String name){
+        return ResponseEntity.ok(restServices.getRestaurantByName(name));
+    }
     @GetMapping("/id/{id}")
     public ResponseEntity<MenuResponseDto> getMenuByName(@PathVariable ("id")long id){
-        return ResponseEntity.ok(services.getById(id));
+        return ResponseEntity.ok(restServices.getById(id));
     }
 
 
