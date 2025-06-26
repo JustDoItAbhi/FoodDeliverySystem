@@ -1,5 +1,6 @@
 package com.foodorderservice;
 
+import com.foodorderservice.dtos.CustomerResponseDto;
 import com.foodorderservice.orderdtos.OrderResponseDto;
 import com.foodorderservice.orderservice.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,11 @@ public class OrderController {
     private OrderService orderService;
 @GetMapping("/order/{name}")
     public ResponseEntity<OrderResponseDto> confirmOrder(@PathVariable("name")String name){
-
     return ResponseEntity.ok(orderService.confirmOrder(name));
 }
+    @GetMapping("/order/checkCustomer/{email}")
+    public ResponseEntity<CustomerResponseDto> confirmClinet(@PathVariable("email")String email){
+        return ResponseEntity.ok(orderService.getCustomerByEmail(email));
+    }
+
 }

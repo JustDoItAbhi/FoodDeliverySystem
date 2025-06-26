@@ -1,4 +1,4 @@
-package com.foodorderservice.orderdtos;
+package com.foodpaymentservice.dtos.orderdtos;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,7 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class OrderResponseDto {
-    private String email;
     private long restaurantId;
     private String restName;
     private long cartId;

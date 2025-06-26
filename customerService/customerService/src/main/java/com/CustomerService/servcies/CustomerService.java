@@ -10,4 +10,5 @@ CustomerResponseDto signupCustomer(CustomerSignUp signUp);
 CustomerResponseDto login(String email,String password);
 List<CustomerResponseDto> getAllCustomers();
 boolean deleteCustomer(long id);
+CustomerResponseDto getByEmail(String email);
 }

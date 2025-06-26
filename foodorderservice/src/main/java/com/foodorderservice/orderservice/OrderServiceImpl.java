@@ -1,6 +1,8 @@
 package com.foodorderservice.orderservice;
 
 
+import com.foodorderservice.apicallsfromcustomer.HttpCallsFromServices;
+import com.foodorderservice.dtos.CustomerResponseDto;
 import com.foodorderservice.orderdtos.OrderResponseDto;
 import com.foodorderservice.orderdtos.OrderStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 public class OrderServiceImpl implements OrderService {
     @Autowired
     private RedisTemplate<String,OrderResponseDto>redisTemplate;
+    @Autowired
+    private HttpCallsFromServices callsFromServices;
 
     @Override
     public OrderResponseDto confirmOrder(String name) {
@@ -18,4 +22,14 @@ public class OrderServiceImpl implements OrderService {
         dto.setOrderStatus(OrderStatus.ORDER_CONFIRM);
         return dto;
     }
+
+    @Override
+    public CustomerResponseDto getCustomerByEmail(String email) {
+        CustomerResponseDto dto=callsFromServices.getCustomer(email);
+        if(dto==null|| !dto.getEmail().equals(email)){
+            throw new RuntimeException("PLEASE SIGNUP AND ADD YOUR DELIVERY ADDRESS");
+        }
+        return dto;
+    }
+
 }

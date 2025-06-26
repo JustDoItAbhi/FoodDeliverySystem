@@ -80,6 +80,7 @@ public class CustomerServiceImpl implements CustomerService{
         dto.setEmailTo(email);
         dto.setEmailSubject("THANKS FOR LOGIN");
         String message= "YOU CAN CHOOSE YOUR CHOICE OF FOOD FROM OUR RESTURANATS";
+
         dto.setEmailMessage(message);
         kafkaTemplate.send(KafkaConstrains.kafkaTopic, dto);
         return CustomerMappers.fromEntity(savedCustomer.get());
@@ -99,5 +100,15 @@ public class CustomerServiceImpl implements CustomerService{
     public boolean deleteCustomer(long id) {
         customerRepository.deleteById(id);
         return true;
+    }
+
+    @Override
+    public CustomerResponseDto getByEmail(String email) {
+        Optional<Customers>savedCustomer=customerRepository.findByEmail(email);
+        if(savedCustomer.isEmpty()){
+            throw new CustomerNotFoundException("THIS EMAIL NOT EXISTS PLEASE SIGN UP "+ email);
+        }
+
+        return CustomerMappers.fromEntity(savedCustomer.get());
     }
 }

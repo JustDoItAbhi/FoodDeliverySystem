@@ -32,4 +32,8 @@ private CustomerService customerService;
     public ResponseEntity<Boolean> deleteCustomer(@PathVariable ("id")Long id){
         return ResponseEntity.ok(customerService.deleteCustomer(id));
     }
+    @GetMapping("/getCustomerByEmail/{email}")
+    public ResponseEntity<CustomerResponseDto> getCustomer(@PathVariable ("email")String email){
+        return ResponseEntity.ok(customerService.getByEmail(email));
+    }
 }
