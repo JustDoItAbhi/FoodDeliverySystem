@@ -31,6 +31,8 @@ public class RestaurantMapper {
     }
     public static RestaurantResponseDto fromRestaurantEntity(Restaurants restaurants){
         RestaurantResponseDto responseDto=forCreatingRest(restaurants);
+        responseDto.setRestaurantId(restaurants.getId());
+        responseDto.setRestaurantName(restaurants.getRestaurantName());
         responseDto.setMenu(MenuMappers.fullMenuMapper(restaurants.getMenu()));
         responseDto.getMenu().setNonVegMenusResponse(NonVegMapper.fromNonVegMenuEntity(restaurants.getMenu().getNonVegMenus()));
         responseDto.getMenu().setVegMenusResponse(VegMenuMapper.fromVegMenuEntity(restaurants.getMenu().getVegMenus()));

@@ -19,8 +19,11 @@ import com.restaurantservice.exceptions.RestaurantNotExists;
 import com.restaurantservice.mappers.VegMenuMapper;
 import com.restaurantservice.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,13 @@ public class AdminResaturantServiceImpl implements AdminRestaurantsServices {
     private VegMenuRepository vegMenuRepository;
     @Autowired
     private PizzaRepository pizzaRepository;
+    @Autowired
+    @Qualifier("restaurantRedisTemplate")
+    private RedisTemplate<String,RestaurantResponseDto>redisTemplate;
+
+    public AdminResaturantServiceImpl(RedisTemplate<String, RestaurantResponseDto> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
 
     // ADDED RESTAURANT
     @Override
@@ -69,7 +79,7 @@ public class AdminResaturantServiceImpl implements AdminRestaurantsServices {
         return RestaurantMapper.forCreatingRest(rest);
     }
 
-    //GET RESTAURANT BY NAME
+    //GET RESTAURANT BY NAME AND ADDED TO REDIS CACHE
     @Override
     public RestaurantResponseDto getRestaurantByName(String name) {
         Optional<Restaurants>savedRestaurants=restaurantsRepository.findByrestaurantName(name);
@@ -77,7 +87,10 @@ public class AdminResaturantServiceImpl implements AdminRestaurantsServices {
             throw new RestaurantNotExists(" this restaurant not exists "+ name);
         }
         Restaurants rest= savedRestaurants.get();
-        return RestaurantMapper.fromRestaurantEntity(rest);
+
+        RestaurantResponseDto responseDto=RestaurantMapper.fromRestaurantEntity(rest);
+                redisTemplate.opsForValue().set(name,responseDto, Duration.ofDays(12));
+        return responseDto;
 
     }
     //GET MENU BY ID

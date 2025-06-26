@@ -1,13 +1,16 @@
 package com.restaurantservice.config;
 
+import com.restaurantservice.cart.cartdtos.CartResponseDto;
 import com.restaurantservice.dtos.responsedtos.RestaurantResponseDto;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class SystemConfig {
@@ -21,5 +24,16 @@ public RedisTemplate<String, RestaurantResponseDto>redisTemplate(RedisConnection
     template.afterPropertiesSet();
     return template;
 }
+
+        @Bean
+        @Qualifier("cartRedisTemplate")
+        public RedisTemplate<String, CartResponseDto>cartRedisTemplate(RedisConnectionFactory factory) {
+            RedisTemplate<String, CartResponseDto> template = new RedisTemplate<>();
+            template.setConnectionFactory(factory);
+            template.setKeySerializer(new StringRedisSerializer());
+            template.setValueSerializer(new Jackson2JsonRedisSerializer<>(CartResponseDto.class));
+//            template.afterPropertiesSet();
+            return template;
+        }
 
 }

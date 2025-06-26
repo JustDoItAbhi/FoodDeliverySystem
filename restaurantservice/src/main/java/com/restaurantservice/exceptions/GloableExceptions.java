@@ -38,4 +38,20 @@ public class GloableExceptions {
         );
         return ResponseEntity.ok(dto);
     }
+    @ExceptionHandler(NonVegMenuNOTExists.class)
+    public ResponseEntity<MessageDto> menuAlreadyexists(NonVegMenuNOTExists e){
+        MessageDto dto=new MessageDto(
+                e.getMessage(),
+                404
+        );
+        return ResponseEntity.ok(dto);
+    }
+    @ExceptionHandler(FoodItemNotFound.class)
+    public ResponseEntity<MessageDto> menuAlreadyexists(FoodItemNotFound e){
+        MessageDto dto=new MessageDto(
+                e.getMessage(),
+                404
+        );
+        return ResponseEntity.ok(dto);
+    }
 }

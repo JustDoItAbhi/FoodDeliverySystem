@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,35 +21,33 @@ import java.util.Optional;
 @Service
 public class ClientRestaurantServiceImpl implements ClientRestaurantService{
     @Autowired
+    @Qualifier("restaurantRedisTemplate")
+    private RedisTemplate<String,RestaurantResponseDto>restaurantResponseDtoRedisTemplate;
+    @Autowired
     private RestaurantsRepository restaurantsRepository;
     @Autowired
     private AddressRepository addressRepository;
     @Autowired
     private NonVegMenuRepository nonVegMenuRepository;
-    @Autowired
-    @Qualifier("restaurantRedisTemplate")
-    private final RedisTemplate<String,RestaurantResponseDto>redisTemplate;
 
-    public ClientRestaurantServiceImpl(RedisTemplate<String, RestaurantResponseDto> redisTemplate) {
-        this.redisTemplate = redisTemplate;
+    public ClientRestaurantServiceImpl(RedisTemplate<String, RestaurantResponseDto> restaurantResponseDtoRedisTemplate) {
+        this.restaurantResponseDtoRedisTemplate = restaurantResponseDtoRedisTemplate;
     }
 
     @Override
-    public RestaurantResponseDto getRestaurantByName(String name) {
+    public RestaurantResponseDto getRestaurantByName(String name) {// added cart to redis
         Optional<Restaurants> savedRestaurants=restaurantsRepository.findByrestaurantName(name);
         if(savedRestaurants.isEmpty()){
             throw new RestaurantNotExists(" this restaurant Not exists "+ name);
         }
         Restaurants rest= savedRestaurants.get();
-//        RestaurantResponseDto cachedRestaurant=redisTemplate.opsForValue().get(name);
-//        if(cachedRestaurant!=null){
-//            return cachedRestaurant;
-//        }
+        RestaurantResponseDto cachedRestaurant= restaurantResponseDtoRedisTemplate.opsForValue().get(name);
+        if(cachedRestaurant!=null){
+            return cachedRestaurant;
+        }
         RestaurantResponseDto savedRest= RestaurantMapper.fromRestaurantEntity(rest);
         savedRest.setMenu(savedRest.getMenu());
-        List<NonVegMenuResponseDto>nonVegMenuResponseDtos=new ArrayList<>();
-
-//        redisTemplate.opsForValue().set(name,savedRest);
+        restaurantResponseDtoRedisTemplate.opsForValue().get(name);
         return savedRest;
     }
 }

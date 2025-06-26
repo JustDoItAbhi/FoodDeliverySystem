@@ -1,26 +1,31 @@
 package com.foodcartservice.cart.controller;
 
-import com.foodcartservice.cart.responsedtos.RestaurantResponseDto;
-import com.foodcartservice.cart.responsedtos.transf.OrderResponseDto;
-import com.foodcartservice.cart.service.FoodCartService;
+import com.foodcartservice.cart.dtos.cartdtos.CartResponseDto;
+import com.foodcartservice.cart.dtos.orderdtos.OrderResponseDto;
+import com.foodcartservice.cart.service.foodcartservices.FoodCartService;
+import com.foodcartservice.cart.service.orderservice.OrderServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/cart")
 public class FoodCartController {
 @Autowired
-    private FoodCartService service;
-    @GetMapping("/{name}")
-    public ResponseEntity<RestaurantResponseDto> getRestByName(@PathVariable("name")String name){
-        return ResponseEntity.ok(service.getRestaurant(name));
+private FoodCartService service;
+@Autowired
+private OrderServices orderServices;
+    @GetMapping("/getCart/{name}")
+    public ResponseEntity<CartResponseDto> getCart(@PathVariable("name")String name){
+        return ResponseEntity.ok(service.getCart(name));
     }
-    @GetMapping("/order/{name}")
-    public ResponseEntity<OrderResponseDto> addToOrder(@PathVariable("name")String name){
-        return ResponseEntity.ok(service.addOrder(name));
+    @GetMapping("/addOrder/{name}")
+    public ResponseEntity<OrderResponseDto> addOrder(@PathVariable("name")String name){
+        return ResponseEntity.ok(orderServices.createOrder(name));
     }
+    @GetMapping("/checkOrder/{name}")
+    public ResponseEntity<OrderResponseDto> checkOrder(@PathVariable("name")String name){
+        return ResponseEntity.ok(orderServices.getOrderByName(name));
+    }
+
 }
