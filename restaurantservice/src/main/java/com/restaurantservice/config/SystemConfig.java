@@ -5,12 +5,11 @@ import com.restaurantservice.dtos.responsedtos.RestaurantResponseDto;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.GenericToStringSerializer;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.serializer.*;
 
 @Configuration
 public class SystemConfig {
@@ -35,5 +34,16 @@ public RedisTemplate<String, RestaurantResponseDto>redisTemplate(RedisConnection
 //            template.afterPropertiesSet();
             return template;
         }
+    @Bean
+    @Qualifier("cartRedisTemplate")
+    public RedisCacheManager cartRedis(RedisConnectionFactory factory) {
+        RedisCacheConfiguration configuration=RedisCacheConfiguration.defaultCacheConfig()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(
+                        new GenericJackson2JsonRedisSerializer())
+                );
+
+        return RedisCacheManager.builder(factory).cacheDefaults(configuration).build();
+    }
 
 }

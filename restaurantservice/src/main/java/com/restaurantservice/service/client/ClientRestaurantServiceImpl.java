@@ -10,6 +10,7 @@ import com.restaurantservice.repositories.NonVegMenuRepository;
 import com.restaurantservice.repositories.RestaurantsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -35,19 +36,20 @@ public class ClientRestaurantServiceImpl implements ClientRestaurantService{
     }
 
     @Override
+    @Cacheable(value = "rest",key = "#name")
     public RestaurantResponseDto getRestaurantByName(String name) {// added cart to redis
         Optional<Restaurants> savedRestaurants=restaurantsRepository.findByrestaurantName(name);
         if(savedRestaurants.isEmpty()){
             throw new RestaurantNotExists(" this restaurant Not exists "+ name);
         }
         Restaurants rest= savedRestaurants.get();
-        RestaurantResponseDto cachedRestaurant= restaurantResponseDtoRedisTemplate.opsForValue().get(name);
-        if(cachedRestaurant!=null){
-            return cachedRestaurant;
-        }
+//        RestaurantResponseDto cachedRestaurant= restaurantResponseDtoRedisTemplate.opsForValue().get(name);
+//        if(cachedRestaurant!=null){
+//            return cachedRestaurant;
+//        }
         RestaurantResponseDto savedRest= RestaurantMapper.fromRestaurantEntity(rest);
         savedRest.setMenu(savedRest.getMenu());
-        restaurantResponseDtoRedisTemplate.opsForValue().get(name);
+//        restaurantResponseDtoRedisTemplate.opsForValue().get(name);
         return savedRest;
     }
 }

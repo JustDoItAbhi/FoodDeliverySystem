@@ -4,7 +4,9 @@ import com.foodpaymentservice.dtos.orderdtos.CustomerResponseDto;
 import com.foodpaymentservice.dtos.orderdtos.OrderResponseDto;
 import com.foodpaymentservice.dtos.orderdtos.PaymentResponseDTO;
 import com.foodpaymentservice.httpscalls.HttpCallsFromService;
+import com.foodpaymentservice.sendingtodelivery.DeliveryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -34,4 +36,22 @@ private RedisTemplate<String,PaymentResponseDTO>redisTemplate;
 
         return responseDTO;
     }
+
+    @Override
+    @Cacheable(value = "DeliveryDTO",key = "#email")
+    public DeliveryDTO createDelivery(String email) {
+        PaymentResponseDTO dto=redisTemplate.opsForValue().get(email);
+        DeliveryDTO deliveryDTO=new DeliveryDTO();
+        deliveryDTO.setCartId(dto.getCartId());
+        deliveryDTO.setAddress(dto.getAddress());
+        deliveryDTO.setCustomerName(dto.getCustomerName());
+        deliveryDTO.setRestaurantId(dto.getRestaurantId());
+        deliveryDTO.setEmail(dto.getEmail());
+        deliveryDTO.setTotalPrice(dto.getTotalPrice());
+        deliveryDTO.setRestName(dto.getRestName());
+        deliveryDTO.setTotalQuantity(dto.getTotalQuantity());
+        deliveryDTO.setMessage("PLEASE CLICK ON THIS LINK TO TRACK THE FOOD DELIVERY :: "+" http://localhost:8081/foodDelivery/getDeliveryStatus/"+email);
+        return deliveryDTO;
+    }
+
 }

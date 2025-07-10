@@ -58,7 +58,7 @@ public class PaymentService implements GeneratePaymentLink{
                 .setAfterCompletion(PaymentLinkCreateParams.AfterCompletion.builder()
                         .setType(PaymentLinkCreateParams.AfterCompletion.Type.REDIRECT)
                         .setRedirect(PaymentLinkCreateParams.AfterCompletion.Redirect.builder()
-                                .setUrl("https://www.youtube.com/")
+                                .setUrl("http://localhost:5000/payment/createDelivery/"+email)
                                 .build())
                         .build())
                 .build();
