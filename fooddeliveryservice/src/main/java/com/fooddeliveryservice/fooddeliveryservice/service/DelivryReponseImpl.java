@@ -1,17 +1,14 @@
 package com.fooddeliveryservice.fooddeliveryservice.service;
 
-import com.fooddeliveryservice.fooddeliveryservice.REPOSITORY.DeliveryRepository;
+import com.fooddeliveryservice.fooddeliveryservice.repositories.DeliveryRepository;
 import com.fooddeliveryservice.fooddeliveryservice.dtos.sendingtodelivery.DeliveryDTO;
 import com.fooddeliveryservice.fooddeliveryservice.dtos.sendingtodelivery.DeliveryResponse;
 import com.fooddeliveryservice.fooddeliveryservice.entity.DeliveringOrder;
 import com.fooddeliveryservice.fooddeliveryservice.entity.DeliveryStatus;
 import com.fooddeliveryservice.fooddeliveryservice.resttemplates.RestClinetCalls;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Optional;
 

@@ -14,7 +14,7 @@ public class RestClinetCalls {
     public RestTemplateBuilder restTemplateBuilder;
     @Cacheable(value = "DeliveryDTO",key = "#email")
 public DeliveryDTO responseEntity(String email){
-    RestTemplate template=new RestTemplate();
+    RestTemplate template=restTemplateBuilder.build();
     String url="http://localhost:5000/payment/createDelivery/"+email;
     ResponseEntity<DeliveryDTO>response=template.getForEntity(url, DeliveryDTO.class);
     if(response==null){
