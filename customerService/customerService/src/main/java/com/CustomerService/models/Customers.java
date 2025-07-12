@@ -15,7 +15,7 @@ public class Customers extends BaseModles{
     private String password;
     @ManyToOne
     private Address address;
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(name = "customers_roles",
 joinColumns =@JoinColumn (name = "customer_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id")

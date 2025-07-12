@@ -9,4 +9,11 @@ import lombok.Setter;
 @Entity
 public class Roles extends BaseModles{
 private String roles;
+
+    public Roles() {
+    }
+
+    public Roles(String roles) {
+        this.roles = roles;
+    }
 }

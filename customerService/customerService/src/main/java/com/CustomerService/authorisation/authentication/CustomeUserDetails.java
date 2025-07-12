@@ -1,16 +1,19 @@
 package com.CustomerService.authorisation.authentication;
 
 import com.CustomerService.models.Customers;
+import com.CustomerService.models.Roles;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 @JsonDeserialize
 public class CustomeUserDetails implements UserDetails {
-    private String userName;
+    private String username;
     private String password;
     private boolean accountNonExpired;
     private boolean accountNonLocked;
@@ -21,8 +24,8 @@ public class CustomeUserDetails implements UserDetails {
     public CustomeUserDetails() {
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPassword(String password) {
@@ -50,18 +53,20 @@ public class CustomeUserDetails implements UserDetails {
     }
 
     public CustomeUserDetails(Customers customers) {
-        this.userName = customers.getEmail();
+        this.username = customers.getEmail();
         this.password = customers.getPassword();
         this.accountNonExpired = true;
         this.accountNonLocked = true;
         this.credentialsNonExpired = true;
         this.enabled = true;
-        this.authorities = customers.getRolesList().stream()
-                .map(role -> new CustomerGrandAuthority(role.getRoles())).collect(Collectors.toList());
+        this.authorities = new ArrayList<>();
+        for (Roles roles : customers.getRolesList()) {
+            this.authorities.add(new SimpleGrantedAuthority(roles.getRoles().toUpperCase()));
+        }
     }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        System.out.println("THIS IS ROLE PRINTING -------------------"+this.authorities);
         return this.authorities;
     }
 
@@ -72,7 +77,7 @@ public class CustomeUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userName;
+        return username;
     }
 
     @Override
